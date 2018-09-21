@@ -1,0 +1,15 @@
+name: "Audiomusica"
+domain: "https://www.audiomusica.com/catalogo/"
+links:
+  - "komplete-kontrol-s49-mk2-teclado-controlador-native-instruments.html"
+  - "controlador-midi-komplete-kontrol-s61-mk2.html"
+  - "microfono-condensador-vp83-para-camara.html"
+  - "microfono-condensador-shotgun-vp83f.html"
+  - "relay-tb516g-microfono-inalambrico-instrum-line-6.html"
+tags:
+  title: ".product-name h1"
+  code: ".detalle-producto-left.last"
+  store: ".precio-tienda"
+  internet: ".precio-internet"
+  sales: ".precio-oferta"
+  price: ".price-box"
