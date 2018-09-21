@@ -11,7 +11,7 @@ func SendEmail(offer OfferData) {
 	log.Println("Send email with offer found")
 
 	from := os.Getenv("from_email")
-	pass := os.Getenv("gmail-api-pass")
+	pass := os.Getenv("gmail_api_pass")
 	subject := "Se ha encontrado una oferta para: " + offer.Name
 	to := os.Getenv("to_email")
 
