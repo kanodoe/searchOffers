@@ -4,19 +4,18 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"searchOffers/process"
 	"time"
 )
 
 func main() {
 
 	var fileArray = GetFileNames()
-	var offerCollections []process.OfferCollection
+	var offerCollections []OfferCollection
 
 	for _, element := range fileArray {
 
-		var config = process.LoadFile(element)
-		var offerCol process.OfferCollection
+		var config = LoadFile(element)
+		var offerCol OfferCollection
 
 		if config.Name != "" {
 			log.Println("Processing file: ", element)
@@ -31,7 +30,7 @@ func main() {
 	}
 
 	if len(offerCollections) > 0 {
-		process.AddRecords(offerCollections)
+		AddRecords(offerCollections)
 	} else {
 		log.Print("There's no YAML files in config-files folder")
 		os.Exit(1)
@@ -45,7 +44,7 @@ func GetFileNames() []string {
 	var fileNames []string
 
 	pwd, _ := os.Getwd()
-	dir := pwd + "/process/config-files"
+	dir := pwd + "/config-files"
 
 	files, _ := ioutil.ReadDir(dir)
 
@@ -60,12 +59,12 @@ func GetFileNames() []string {
 /**
 Retrieve the offers one by one and return an object with all them
 */
-func GetOffers(config process.Yaml) []process.OfferData {
-	var offers []process.OfferData
-	var tags = process.Tags(config.Tags)
+func GetOffers(config Yaml) []OfferData {
+	var offers []OfferData
+	var tags = Tags(config.Tags)
 
 	for i := range config.Links {
-		offers = append(offers, process.RetrieveData(config.Domain+config.Links[i], tags))
+		offers = append(offers, RetrieveData(config.Domain+config.Links[i], tags))
 	}
 
 	return offers
