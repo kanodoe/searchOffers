@@ -1,9 +1,5 @@
 Offer Crawler
 ===
-[![Build Status](https://travis-ci.org/Iwark/spreadsheet.svg?branch=v2)](https://travis-ci.org/Iwark/spreadsheet)
-[![Coverage Status](https://coveralls.io/repos/github/Iwark/spreadsheet/badge.svg?branch=v2)](https://coveralls.io/github/Iwark/spreadsheet?branch=v2)
-[![GoReport](https://goreportcard.com/badge/Iwark/spreadsheet)](http://goreportcard.com/report/Iwark/spreadsheet)
-[![GoDoc](https://godoc.org/gopkg.in/Iwark/spreadsheet.v2?status.svg)](https://godoc.org/gopkg.in/Iwark/spreadsheet.v2)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 This project (my first project using golang) intend to help anyone who wants to easily check offers of their interest in onzline stores, saving what found and send an email in case of find something, it support multiple stores and links, but is necessary to make some configuration to work.
