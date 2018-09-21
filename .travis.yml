@@ -3,7 +3,6 @@ sudo: false
 go:
   - "1.10.3"
   - master
-go_import_path: searchOffers/process
 matrix:
   allow_failures:
   - go: tip
