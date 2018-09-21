@@ -1,5 +1,6 @@
 Offer Crawler
 ===
+[![Build Status](https://travis-ci.org/kanodoe/searchOffers.svg?branch=master)](https://travis-ci.org/kanodoe/searchOffers)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 This project (my first project using golang) intend to help anyone who wants to easily check offers of their interest in online stores, saving what found and send an email in case of find something, it support multiple stores and links, but is necessary to make some configuration to work.

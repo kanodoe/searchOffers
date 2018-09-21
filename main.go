@@ -2,6 +2,7 @@ package main
 
 import (
 	"io/ioutil"
+	"log"
 	"os"
 	"searchOffers/process"
 	"time"
@@ -10,19 +11,31 @@ import (
 func main() {
 
 	var fileArray = GetFileNames()
-	var offerCollection process.OfferCollection
+	var offerCollections []process.OfferCollection
 
 	for _, element := range fileArray {
 
 		var config = process.LoadFile(element)
-		var now = time.Now()
+		var offerCol process.OfferCollection
 
-		offerCollection.StoreName = config.Name
-		offerCollection.Date = now.Format(time.RFC822Z)
-		offerCollection.OfferDataCollection = GetOffers(config)
+		if config.Name != "" {
+			log.Println("Processing file: ", element)
+			var now = time.Now()
+
+			offerCol.StoreName = config.Name
+			offerCol.Date = now.Format(time.RFC822Z)
+			offerCol.OfferDataCollection = GetOffers(config)
+
+			offerCollections = append(offerCollections, offerCol)
+		}
 	}
 
-	process.AddRecords(offerCollection)
+	if len(offerCollections) > 0 {
+		process.AddRecords(offerCollections)
+	} else {
+		log.Print("There's no YAML files in config-files folder")
+		os.Exit(1)
+	}
 }
 
 /**

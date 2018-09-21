@@ -44,6 +44,9 @@ func LoadFile(filename string) (result Yaml) {
 	return conf
 }
 
+/**
+Validate the filename exist returning a boolean value
+*/
 func fileValidate(filename string) bool {
 	if _, err := os.Stat(filename); err == nil {
 		return true

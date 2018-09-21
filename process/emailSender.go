@@ -3,13 +3,17 @@ package process
 import (
 	"log"
 	"net/smtp"
+	"os"
 )
 
 func SendEmail(offer OfferData) {
-	from := ""
-	pass := ""
-	subject := "" + offer.Name
-	to := ""
+
+	log.Println("Send email with offer found")
+
+	from := os.Getenv("from_email")
+	pass := os.Getenv("gmail-api-pass")
+	subject := "Se ha encontrado una oferta para: " + offer.Name
+	to := os.Getenv("to_email")
 
 	msg := "From: " + from + "\n" +
 		"To: " + to + "\n" +

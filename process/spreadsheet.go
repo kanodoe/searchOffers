@@ -1,40 +1,46 @@
 package process
 
 import (
-	"fmt"
 	"golang.org/x/net/context"
 	"golang.org/x/oauth2/google"
 	"gopkg.in/Iwark/spreadsheet.v2"
 	"io/ioutil"
+	"log"
 )
 
-func AddRecords(collection OfferCollection) {
+func AddRecords(collection []OfferCollection) {
 
-	sheet := initSpreadsheet(collection.StoreName)
+	for _, item := range collection {
+		sheet := initSpreadsheet(item.StoreName)
 
-	var nextRowPos = getNextEmptyRow(sheet)
+		var nextRowPos = getNextEmptyRow(sheet)
 
-	for i, offer := range collection.OfferDataCollection {
+		for i, offer := range item.OfferDataCollection {
 
-		if searchLastCode(sheet, offer) {
-			SendEmail(offer)
+			if searchLastCode(sheet, offer) {
+				log.Print("New price was found for product: ", offer.Name)
+				SendEmail(offer)
+			}
+
+			sheet.Update(nextRowPos+i, 0, item.Date)
+			sheet.Update(nextRowPos+i, 1, offer.Name)
+			sheet.Update(nextRowPos+i, 2, offer.Code)
+			sheet.Update(nextRowPos+i, 3, offer.StorePrice)
+			sheet.Update(nextRowPos+i, 4, offer.InetPrice)
+			sheet.Update(nextRowPos+i, 5, offer.InetOfferPrice)
+			sheet.Update(nextRowPos+i, 6, offer.Uri)
 		}
 
-		sheet.Update(nextRowPos+i, 0, collection.Date)
-		sheet.Update(nextRowPos+i, 1, offer.Name)
-		sheet.Update(nextRowPos+i, 2, offer.Code)
-		sheet.Update(nextRowPos+i, 3, offer.StorePrice)
-		sheet.Update(nextRowPos+i, 4, offer.InetPrice)
-		sheet.Update(nextRowPos+i, 5, offer.InetOfferPrice)
-		sheet.Update(nextRowPos+i, 6, offer.Uri)
+		// Make sure call Synchronize to reflect the changes
+		err := sheet.Synchronize()
+		checkError(err)
 	}
-
-	// Make sure call Synchronize to reflect the changes
-	err := sheet.Synchronize()
-	checkError(err)
 }
 
 func initSpreadsheet(sheetTitle string) *spreadsheet.Sheet {
+
+	log.Print("Init spreadsheet service to connect GCP API")
+
 	var sheet *spreadsheet.Sheet
 
 	data, err := ioutil.ReadFile("client_secret.json")
@@ -57,18 +63,19 @@ func initSpreadsheet(sheetTitle string) *spreadsheet.Sheet {
 }
 
 func fetchSpreadsheet(service *spreadsheet.Service) spreadsheet.Spreadsheet {
-	sp, err := service.FetchSpreadsheet("11y4NmD39gPSPcKAzMU0lsAoFWXQsXOVxJNNVZXV7xek")
+
+	ss, err := service.FetchSpreadsheet("11y4NmD39gPSPcKAzMU0lsAoDWVQsXOVxJNNVZXV7xek")
 	checkError(err)
 
-	return sp
+	return ss
 }
 
 func findSheetByTitle(sheetTitle string, service *spreadsheet.Service) *spreadsheet.Sheet {
-	fmt.Println("findSheetByTitle: ", sheetTitle)
 
-	sp := fetchSpreadsheet(service)
+	ss := fetchSpreadsheet(service)
 
-	sheet, err := sp.SheetByTitle(sheetTitle)
+	log.Println("Finding sheet with name ", sheetTitle)
+	sheet, err := ss.SheetByTitle(sheetTitle)
 	checkError(err)
 
 	return sheet
@@ -76,7 +83,8 @@ func findSheetByTitle(sheetTitle string, service *spreadsheet.Service) *spreadsh
 
 func createNewSheet(sheetTitle string, service *spreadsheet.Service) *spreadsheet.Sheet {
 
-	fmt.Println("createNewSheet: ", sheetTitle)
+	log.Print("Sheet not found, creating sheet named: ", sheetTitle)
+
 	ss, err := service.CreateSpreadsheet(spreadsheet.Spreadsheet{
 		Properties: spreadsheet.Properties{
 			Title: sheetTitle,
@@ -92,6 +100,9 @@ func createNewSheet(sheetTitle string, service *spreadsheet.Service) *spreadshee
 }
 
 func getNextEmptyRow(sheet *spreadsheet.Sheet) int {
+
+	log.Println("Finding last row position with values")
+
 	var counter uint
 
 	for _, row := range sheet.Rows {
@@ -105,6 +116,8 @@ func getNextEmptyRow(sheet *spreadsheet.Sheet) int {
 
 func searchLastCode(sheet *spreadsheet.Sheet, data OfferData) bool {
 	var match bool
+
+	log.Println("Search for the same code (newly added only) and then compare if the price has changed")
 
 	for i := range sheet.Rows {
 		if sheet.Rows[i][2].Value == data.Code {
@@ -122,7 +135,7 @@ func searchLastCode(sheet *spreadsheet.Sheet, data OfferData) bool {
 
 func checkError(err error) {
 	if err != nil {
-		fmt.Println("error: ", err)
+		log.Fatal("error: ", err)
 		panic(err.Error())
 	}
 }

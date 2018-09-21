@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"github.com/PuerkitoBio/goquery"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"regexp"
 	"strings"
@@ -26,6 +27,9 @@ type OfferData struct {
 }
 
 func RetrieveData(uri string, tags Tags) OfferData {
+
+	log.Print("Retrieving data from uri: ", uri)
+
 	var offer OfferData
 
 	resp, err := http.Get(uri)
@@ -52,15 +56,18 @@ func RetrieveData(uri string, tags Tags) OfferData {
 }
 
 func removeCodePrefix(code string) string {
+	log.Println("Removing Code, or SKU word config")
 	reg := regexp.MustCompile(`^[^:-].*?:\s*`)
 	return reg.ReplaceAllString(code, "${1}")
 }
 
 func spaceFieldsJoin(str string) string {
+	log.Println("Removing space fields")
 	return strings.Join(strings.Fields(str), "")
 }
 
 func removeDuplicatedWhitespace(str string) string {
+	log.Println("Removing whitespace form crawled data")
 	space := regexp.MustCompile(`\s+`)
 	return space.ReplaceAllString(str, " ")
 }
