@@ -1,4 +1,4 @@
-package process
+package main
 
 import (
 	"golang.org/x/net/context"
@@ -117,7 +117,7 @@ func getNextEmptyRow(sheet *spreadsheet.Sheet) int {
 func searchLastCode(sheet *spreadsheet.Sheet, data OfferData) bool {
 	var match bool
 
-	log.Println("Search for the same code (newly added only) and then compare if the price has changed")
+	log.Println("Search by last update in price and then compare if has changed")
 
 	for i := range sheet.Rows {
 		if sheet.Rows[i][2].Value == data.Code {
@@ -128,6 +128,10 @@ func searchLastCode(sheet *spreadsheet.Sheet, data OfferData) bool {
 				match = true
 			}
 		}
+	}
+
+	if !match {
+		log.Println("No change")
 	}
 
 	return match
